@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Eulenwald/GoWeb/v29_ReOrg/pkg/handler"
+	"github.com/Eulenwald/GoWeb/pkg/handler"
 )
 
 const portNumber = 8080

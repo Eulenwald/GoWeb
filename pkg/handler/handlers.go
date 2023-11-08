@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/Eulenwald/GoWeb/v29_ReOrg/pkg/render"
+	"github.com/Eulenwald/GoWeb/pkg/render"
 )
 
 // Handler for the startpage
