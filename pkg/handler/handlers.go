@@ -10,7 +10,7 @@ import (
 func Home(w http.ResponseWriter, r *http.Request) {
 	//n, err := fmt.Fprintf(w, "Hello, 世界")
 	//fmt.Fprintf(w, "Hello, 世界")
-	render.RenderATemplate(w, "home-page.tpml")	
+	render.RenderATemplate(w, "home-page.tpml")
 }
 
 // Handler for the about-page

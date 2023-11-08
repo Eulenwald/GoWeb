@@ -1,3 +1,3 @@
-module github.com/Eulenwald/GoWeb/v29_ReOrg
+module github.com/Eulenwald/GoWeb
 
 go 1.21.4
