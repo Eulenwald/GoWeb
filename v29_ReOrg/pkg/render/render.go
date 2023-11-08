@@ -1,4 +1,4 @@
-package main
+package render
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"text/template"
 )
 
-func renderATemplate(w http.ResponseWriter, tpml string) {
+func RenderATemplate(w http.ResponseWriter, tpml string) {
 	rTemp, err := template.ParseFiles("./templates/" + tpml)
 
 	if err != nil {
