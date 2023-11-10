@@ -1,20 +1,96 @@
 package render
 
 import (
-	"fmt"
+	"bytes"
+	"html/template"
+	"log"
 	"net/http"
-	"text/template"
+	"path/filepath"
+
+	"github.com/Eulenwald/GoWeb/pkg/config"
+	"github.com/Eulenwald/GoWeb/pkg/models"
 )
 
-func RenderATemplate(w http.ResponseWriter, tpml string) {
-	rTemp, err := template.ParseFiles("./templates/" + tpml)
+func AddDefaultData(tmplData *models.TmplData) *models.TmplData {
+	
+	return tmplData 
+}
 
-	if err != nil {
-		fmt.Println("An error is happen. Exactly:", err)
-	}
-	err = rTemp.Execute(w, nil)
+var app *config.AppConfig
 
-	if err != nil {
-		fmt.Println("An error is happen. Exactly:", err)
+func NewTemplate(p *config.AppConfig) {
+	app = p
+}
+
+func RenderATemplate(w http.ResponseWriter, tmpl string,  pTmplData *models.TmplData) {
+
+	var err error
+	var mpCache map[string]*template.Template
+
+	if app.UseCache {
+		// get the cache from AppConfig
+		mpCache = app.TemplateCache
+	} else {
+		mpCache, _ = CreateTemplateCache()
+ }
+	// get the caching template
+	actTempl, ok := mpCache[tmpl]
+	if !ok {
+		log.Fatalf("Error %s not cached.\n", tmpl)
 	}
+
+	// store the result in a buffer to check its valid
+	buf := new(bytes.Buffer)
+	
+	pTmplData = AddDefaultData(pTmplData)
+	
+	err = actTempl.Execute(buf, pTmplData)
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	// Now we render the actTemplate
+	_, err = buf.WriteTo(w)
+	if err != nil {
+		log.Panicln(err)
+	}	
+}
+
+func CreateTemplateCache() (map[string]*template.Template, error) {
+	//var err error
+	//var pages []string
+	mpCacheVal := map[string]*template.Template{}
+
+	// slTemplate => slice of strings
+	slTempl, err := filepath.Glob("./templates/*-page.tmpl")
+	if err != nil {
+		return mpCacheVal, err
+	}
+
+	// iterate over a sliceOfString
+	for _, sTempl := range slTempl {
+		// get the filename of the path
+		name := filepath.Base(sTempl)
+		// create a new template
+		pTempl, err := template.New(name).ParseFiles(sTempl)
+		if err != nil {
+			return mpCacheVal, err
+		}
+
+		slLayoutTempl, err := filepath.Glob("./templates/*-layout.tmpl")
+		if err != nil {
+			return mpCacheVal, err
+		}
+
+		if len(slLayoutTempl) > 0 {
+			// layout founded. actuall page and founded layouts concat
+			pTempl, err = pTempl.ParseGlob("./templates/*-layout.tmpl")
+			if err != nil {
+				return mpCacheVal, err
+			}
+		}
+		mpCacheVal[name] = pTempl
+	}
+
+	return mpCacheVal, nil
 }
