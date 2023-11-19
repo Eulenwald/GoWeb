@@ -26,7 +26,8 @@ func main() {
 	app.TemplateCache = tc
 	app.UseCache = false
 
-	pRepository := handler.NewRepository(&app)
+	// linked the app module to "handler" and "render"
+	pRepository := handler.NewRepository(&app)	
 	handler.NewHandler(pRepository)
 	render.NewTemplate(&app)
 

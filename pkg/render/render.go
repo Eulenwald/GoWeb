@@ -11,15 +11,14 @@ import (
 	"github.com/Eulenwald/GoWeb/pkg/models"
 )
 
-func AddDefaultData(tmplData *models.TmplData) *models.TmplData {
-	
+func AddDefaultData(tmplData *models.TmplData) *models.TmplData {	
 	return tmplData 
 }
 
-var app *config.AppConfig
+var pApp *config.AppConfig
 
 func NewTemplate(p *config.AppConfig) {
-	app = p
+	pApp = p
 }
 
 func RenderATemplate(w http.ResponseWriter, tmpl string,  pTmplData *models.TmplData) {
@@ -27,9 +26,9 @@ func RenderATemplate(w http.ResponseWriter, tmpl string,  pTmplData *models.Tmpl
 	var err error
 	var mpCache map[string]*template.Template
 
-	if app.UseCache {
+	if pApp.UseCache {
 		// get the cache from AppConfig
-		mpCache = app.TemplateCache
+		mpCache = pApp.TemplateCache
 	} else {
 		mpCache, _ = CreateTemplateCache()
  }
